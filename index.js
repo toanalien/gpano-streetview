@@ -74,22 +74,6 @@ app.get('/img', function(req, res) {
     }
     var location = [req.query.lat, req.query.lng];
     var zoom = parseInt(req.query.zoom);
-    panorama(location, function(err, result) {
-        if (err) throw err;
-        var data = getPanoTileImages(result.id, zoom);
-        res.writeHead(200, {
-            'Content-Type': 'text/html'
-        });
-        
-    });
-});
-
-app.get('/img', function(req, res) {
-    if (req.query.lat && req.query.lng) {} else {
-        res.end('lat & lng required !');
-    }
-    var location = [req.query.lat, req.query.lng];
-    var zoom = parseInt(req.query.zoom);
 
     panorama(location, function(err, result) {
         if (err) throw err;
@@ -109,7 +93,6 @@ app.get('/img', function(req, res) {
                 var img = new Image();
                 img.src = new Buffer(body, 'binary');
                 ctx.drawImage(img, image.position[0], image.position[1], data.tileWidth, data.tileHeight);
-
                 cb();
             });
         }, function(err, result) {
