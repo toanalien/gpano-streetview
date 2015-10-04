@@ -7,8 +7,12 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "ejs": "2.3.3",
-    "express": "4.13.3"
+    "express": "4.13.3",
+    "nets": "*",
+    "defined": "*",
+    "canvas": "*",
+    "async": "*",
+    "request": "*"
   },
   "engines": {
     "node": "0.12.7"
