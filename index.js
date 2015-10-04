@@ -68,6 +68,55 @@ app.get('/json', function(req, res) {
     });
 });
 
+app.get('/img', function(req, res) {
+    if (req.query.lat && req.query.lng) {} else {
+        res.end('lat & lng required !');
+    }
+    var location = [req.query.lat, req.query.lng];
+    var zoom = parseInt(req.query.zoom);
+    panorama(location, function(err, result) {
+        if (err) throw err;
+        var data = getPanoTileImages(result.id, zoom);
+        res.writeHead(200, {
+            'Content-Type': 'text/html'
+        });
+        
+    });
+});
+
+app.get('/img', function(req, res) {
+    if (req.query.lat && req.query.lng) {} else {
+        res.end('lat & lng required !');
+    }
+    var location = [req.query.lat, req.query.lng];
+    var zoom = parseInt(req.query.zoom);
+
+    panorama(location, function(err, result) {
+        if (err) throw err;
+        var data = getPanoTileImages(result.id, zoom);
+        res.writeHead(200, {
+            'Content-Type': 'text/html'
+        });
+        var canvas = new Canvas(data.width, data.height);
+        var ctx = canvas.getContext('2d');
+        // res.end();
+        async.mapSeries(data.images, function(image, cb) {
+            console.log(image.url);
+            request.get({
+                url: image.url,
+                encoding: null
+            }, function(err, res, body) {
+                var img = new Image();
+                img.src = new Buffer(body, 'binary');
+                ctx.drawImage(img, image.position[0], image.position[1], data.tileWidth, data.tileHeight);
+
+                cb();
+            });
+        }, function(err, result) {
+            res.end('<img src="' + canvas.toDataURL() + '"/>');
+        });
+    });
+});
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));
