@@ -99,12 +99,12 @@ app.get('/img', function(req, res) {
             /*res.end('<img src="' + canvas.toDataURL() + '"/>');*/
             var data = canvas.toDataURL().replace(/^data:image\/\w+;base64,/, "");
             var buf = new Buffer(data, 'base64');
-            fs.writeFile(result.id + ".png", buf);
-            fs.readFile(result.id + ".png", function(err, data) {
+            fs.writeFile("image.png", buf);
+            fs.readFile("image.png", function(err, data) {
                 if (err) throw err;
-                res.write(data);
+                res.end(data);
             });
-            res.end();
+
         });
     });
 });
