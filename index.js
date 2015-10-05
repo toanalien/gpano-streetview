@@ -79,7 +79,7 @@ app.get('/img', function(req, res) {
         if (err) throw err;
         var data = getPanoTileImages(result.id, zoom);
         res.writeHead(200, {
-            'Content-Type': 'text/html'
+            'Content-Type': 'image/png'
         });
         var canvas = new Canvas(data.width, data.height);
         var ctx = canvas.getContext('2d');
@@ -96,7 +96,15 @@ app.get('/img', function(req, res) {
                 cb();
             });
         }, function(err, result) {
-            res.end('<img src="' + canvas.toDataURL() + '"/>');
+            /*res.end('<img src="' + canvas.toDataURL() + '"/>');*/
+            var data = canvas.toDataURL().replace(/^data:image\/\w+;base64,/, "");
+            var buf = new Buffer(data, 'base64');
+            fs.writeFile(result.id + ".png", buf);
+            fs.readFile(result.id + ".png", function(err, data) {
+                if (err) throw err;
+                res.write(data);
+            });
+            res.end();
         });
     });
 });
