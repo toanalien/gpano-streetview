@@ -7,6 +7,7 @@
 - get-panorama-by-location : trả về id của location
 - getPanoURL : trả về url của từng hình nhỏ 
 - canvas : dùng để merge nhiều hình thành hình panorama
+
 ** hướng dẫn cài đặt canvas ** [https://github.com/Automattic/node-canvas/wiki](https://github.com/Automattic/node-canvas/wiki)
 
 ## 2. API
