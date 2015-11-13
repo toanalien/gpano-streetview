@@ -51,7 +51,7 @@ var getImg = function (url, cb) {
 }
 
 app.get('/img', function (req, res) {
-    if (!req.query.lat || !req.query.lng) {
+    if (!req.query.lat || !req.query.lng || !req.query.zoom) {
         res.send('error');
     } else {
         var location = [req.query.lat, req.query.lng];
@@ -59,30 +59,31 @@ app.get('/img', function (req, res) {
         panorama(location, function (err, result) {
             if (err) res.send('error');
             else {
-                var data = getPanoTileImages(result.id, zoom);
-                var canvas = new Canvas(data.width, data.height);
-                var ctx = canvas.getContext('2d');
-                async.mapSeries(data.images, function (image, cb) {
-                    getImg(image.url, function (err, body) {
-                        if (err) return console.log(err);
-                        var img = new Image();
-                        img.src = new Buffer(body, 'binary');
-                        ctx.drawImage(img, image.position[0], image.position[1], data.tileWidth, data.tileHeight);
-                        cb();
-                    });
-                }, function () {
-                    fs.exists(result.id + zoom + ".png", function (exists) {
-                        if (!exists) {
+                fs.exists(path.join(__dirname + '/images/' + result.id + "z" + zoom + ".png"), function (exists) {
+                    if (!exists) {
+                        var data = getPanoTileImages(result.id, zoom);
+                        var canvas = new Canvas(data.width, data.height);
+                        var ctx = canvas.getContext('2d');
+                        async.mapSeries(data.images, function (image, cb) {
+                            getImg(image.url, function (err, body) {
+                                if (err) return console.log(err);
+                                var img = new Image();
+                                img.src = new Buffer(body, 'binary');
+                                ctx.drawImage(img, image.position[0], image.position[1], data.tileWidth, data.tileHeight);
+                                cb();
+                            });
+                        }, function () {
                             var data = canvas.toDataURL().replace(/^data:image\/\w+;base64,/, "");
                             var buf = new Buffer(data, 'base64');
                             fs.writeFile(path.join(__dirname + '/images/' + result.id + "z" + zoom + ".png"), buf);
-                        }
-
+                            res.send(result.id + "z" + zoom + ".png");
+                        })
+                    }
+                    else
                         res.send(result.id + "z" + zoom + ".png");
-                    });
-                });
+                })
             }
-        });
+        })
     }
 });
 
