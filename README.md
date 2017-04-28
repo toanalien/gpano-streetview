@@ -1,5 +1,7 @@
 # gpano-streetview
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/toanalien/gpano-streetview.svg)](https://greenkeeper.io/)
+
 ## Sử dụng API của Google StreetView để get ảnh Panorama theo tọa độ 
 
 ## 1. Các modules
